@@ -1,5 +1,7 @@
 #include "parser.hpp"
-#include "number.hpp"
+#include "prim.hpp"
+#include "trim.hpp"
+#include "expr.hpp"
 
 using Token = Lexer::Token;
 
@@ -16,14 +18,10 @@ ASTNode *Parser::expr() {
             std::string op = lexer_.get_operator();
             switch (op.front()) {
             case '+':
-                // Implement Add class and uncomment this line
-                // root = new Add(root, term());
-                return nullptr;
+                root = new Add(root, term());
                 break;
             case '-':
-                // Implement Sub class and uncomment this line
-                //root = new Sub(root, term());
-                return nullptr;
+                root = new Sub(root, term());
                 break;
             default:
                 return root;
@@ -45,14 +43,10 @@ ASTNode *Parser::term() {
             std::string op = lexer_.get_operator();
             switch (op.front()) {
             case '*':
-                // Implement Mul class and uncomment this line
-                // root = new Mul(root, prim());
-                return nullptr;
+                root = new Mul(root, prim());
                 break;
             case '/':
-                // Implement Div class and uncomment this line
-                //root = new Div(root, prim());
-                return nullptr;
+                root = new Div(root, prim());
                 break;
             default:
                 return root;
@@ -74,10 +68,13 @@ ASTNode *Parser::prim() {
         node = new Number(lexer_.get_number());
         break;
     case Token::Name:
-        // Implement Variable class and uncomment this line
-        // node = new Variable(lexer_.get_name());
-        return nullptr;
+        node = new Variable(lexer_.get_name());
         break;
+    case Token::Lbrace:
+        node = expr();
+        if (tok_ != Token::Rbrace) {
+          return nullptr;
+        }
     default:
         break;
     }
