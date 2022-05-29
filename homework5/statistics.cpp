@@ -96,7 +96,7 @@ public:
 	double eval() const override {
 		auto mean = m_mean.eval();
 
-		auto std = 0;
+		auto std = 0.;
 		for (auto& a : m_data)
 			std += (a - mean) * (a - mean);
 
