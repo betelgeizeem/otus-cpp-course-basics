@@ -17,7 +17,7 @@ class ASTNode {
 
     ASTNode &operator=(const ASTNode &other) = delete;
 
-    ~ASTNode();
+    virtual ~ASTNode();
 
     std::string repr() const { return repr_; }
 
