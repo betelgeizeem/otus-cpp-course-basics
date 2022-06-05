@@ -2,13 +2,28 @@
 #include "container.hpp"
 
 template<class T>
-class List : public IContainer<T>
+class BidirectionalList : public IContainer<T>
 {
 public:
     using IContainer<T>::_size;
     using typename IContainer<T>::Iterator;
 
-    List() : _first{nullptr}, _last{nullptr} {}
+    BidirectionalList() : _first{nullptr}, _last{nullptr} {}
+    ~BidirectionalList() override
+    {
+        for (auto node = _first; node != nullptr; )
+        {
+            auto nodeToRemove = node;
+            node = node->next;
+            delete nodeToRemove;
+        }
+    }
+
+    Iterator begin() { return Iterator(&(getNode(0)->_data)); }
+    Iterator end() { return Iterator(&(getNode(_size-1)->_data)); }
+
+    // ERROR: cannot define member function ‘IContainer<T>::Iterator::operator++’ within ‘BidirectionalList<T>’
+    Iterator& Iterator::operator++() override {}
 
     void pushBack(const T& value) override
     {
@@ -61,16 +76,6 @@ public:
     const T& operator[](size_t pos) const override
     {
         return getNode(pos)->data();
-    }
-
-    ~List()
-    {
-        for (auto node = _first; node != nullptr; )
-        {
-            auto nodeToRemove = node;
-            node = node->next;
-            delete nodeToRemove;
-        }
     }
 
 private:
@@ -126,9 +131,9 @@ private:
         {
             auto oldNodeThis = getNode(pos);
             auto oldNodePrev = oldNodeThis->prev;
-            auto oldNodeNext = oldNodeThis->next;
+            
             link(oldNodePrev, node);
-            link(node, oldNodeNext);
+            link(node, oldNodeThis);
         }
 
         _size++;
